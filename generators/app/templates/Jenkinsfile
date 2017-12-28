@@ -1,0 +1,55 @@
+pipeline {
+  agent any
+  stages {
+    stage("build image from Dockerfile") {
+      steps {
+        sh "rm -f BUILD_NUMBER && echo '${currentBuild.getNumber()}' > BUILD_NUMBER"
+        sh "docker build -t localhost:5000/${JOB_NAME}:${currentBuild.getNumber()} ."
+      }
+    }
+    stage("push image to registry") {
+      steps {
+        sh "docker push localhost:5000/${JOB_NAME}:${currentBuild.getNumber()}"
+      }
+    }
+    stage("init app config to kubernetes if needed") {
+      when {
+          environment name: "NEED_INIT_APP_CONFIG", value: "true"
+      }
+      steps {
+        sh "sed -e 's/\${SERVICE_NAME}/${JOB_NAME}/' k8sAppConfig.yaml > k8sAppConfig_generate.yaml"
+        sh "kubectl apply -f k8sAppConfig_generate.yaml"
+      }
+    }
+    stage("execute initial job before deploy if needed") {
+      when {
+          environment name: "NEED_EXECUTE_INITIAL_JOB", value: "true"
+      }
+      steps {
+        sh "sed -e 's/\${SERVICE_NAME}/${JOB_NAME}/' -e 's/\${BUILD_NUMBER}/${currentBuild.getNumber()}/' -e 's/\${MY_DOMAIN}/${MY_DOMAIN}/' -e 's/\${MY_DOMAIN_TLS_SECRET_NAME}/${MY_DOMAIN_TLS_SECRET_NAME}/' -e 's/\${INSTANCE_COUNT}/${INSTANCE_COUNT}/' k8sAppInitJob.yaml > k8sAppInitJob_generate.yaml"
+        sh "kubectl apply -f k8sAppInitJob_generate.yaml"
+        sh "until kubectl get jobs ${JOB_NAME}-init-job-${BUILD_NUMBER} -o jsonpath='{.status.conditions[?(@.status==\"True\")].status}' | grep True ; do sleep 1 ; done"
+
+        script {
+          sh "kubectl get jobs ${JOB_NAME}-init-job-${BUILD_NUMBER} -o jsonpath='{.status.conditions[?(@.status==\"True\")].type}' > result"
+          def result = readFile('result').trim()
+          sh "rm -f result"
+          sh "echo ${result}"
+          if (result == "Complete") {
+            sh "echo 'init success'"
+            sh "kubectl delete -f k8sAppInitJob_generate.yaml"
+          } else {
+            sh "echo 'init failed'"
+            error("init failed, exit")
+          }
+        }
+      }
+    }
+    stage("deploy as a kubernetes service") {
+      steps {
+        sh "sed -e 's/\${SERVICE_NAME}/${JOB_NAME}/' -e 's/\${BUILD_NUMBER}/${currentBuild.getNumber()}/' -e 's/\${MY_DOMAIN}/${MY_DOMAIN}/' -e 's/\${MY_DOMAIN_TLS_SECRET_NAME}/${MY_DOMAIN_TLS_SECRET_NAME}/' -e 's/\${INSTANCE_COUNT}/${INSTANCE_COUNT}/' k8sAppDeploy.yaml > k8sAppDeploy_generate.yaml"
+        sh "kubectl apply -f k8sAppDeploy_generate.yaml"
+      }
+    }
+  }
+}

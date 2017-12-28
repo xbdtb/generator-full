@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SERVICE_NAME}
+  labels:
+    app: ${SERVICE_NAME}
+spec:
+  selector:
+    matchLabels:
+      app: ${SERVICE_NAME}
+  replicas: ${INSTANCE_COUNT}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE_NAME}
+    spec:
+      containers:
+      - name: ${SERVICE_NAME}
+        image: localhost:5000/${SERVICE_NAME}:${BUILD_NUMBER}
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: ${SERVICE_NAME}
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "50Mi"
+          limits:
+            cpu: "300m"
+            memory: "500Mi"
+      volumes:
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+          type: File
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${SERVICE_NAME}
+  labels:
+    app: ${SERVICE_NAME}
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: ${SERVICE_NAME}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-${SERVICE_NAME}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+      - ${MY_DOMAIN}
+      secretName: ${MY_DOMAIN_TLS_SECRET_NAME}
+  rules:
+  - host: ${MY_DOMAIN}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ${SERVICE_NAME}
+          servicePort: 80

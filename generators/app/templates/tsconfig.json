@@ -1,0 +1,12 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "target": "ES6",
+    "experimentalDecorators":true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true
+  },
+  "exclude": ["node_modules"]
+}

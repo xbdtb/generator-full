@@ -1,0 +1,80 @@
+graphqlServerIndex:
+  GENERATOR_PLACEHODER_GRAPHQL_SERVER_INDEX_1: |
+    import schema from './graphql/schema';
+    import {graphiqlExpress, graphqlExpress} from 'graphql-server-express';
+  GENERATOR_PLACEHODER_GRAPHQL_SERVER_INDEX_2: |
+    ##
+        app.post('/gql', bodyParser.json(), graphqlExpress(req => ({schema, context: req})));
+        app.get('/gql', graphiqlExpress({endpointURL: '/gql'}));
+
+redisConfig:
+  GENERATOR_PLACEHODER_REDIS_CONFIG: |
+    ##
+      redis: {
+        host: getServiceHost('redis', 'localhost'),
+        port: 6379,
+        pass: process.env.REDIS_PASSWORD || 'full'
+      },
+redisSessionIndex:
+  GENERATOR_PLACEHODER_REDIS_SESSION_INDEX_1: |
+    import * as redis from 'connect-redis';
+    import {defaultCacheClient} from './lib/core/cacheClient';
+  GENERATOR_PLACEHODER_REDIS_SESSION_INDEX_2: |
+    const RedisStore = redis(session);
+  GENERATOR_PLACEHODER_REDIS_SESSION_INDEX_3: |
+    ##
+        defaultCacheClient.initialize(config.redis);
+  GENERATOR_PLACEHODER_REDIS_SESSION_INDEX_4: |
+    ##
+                store: new RedisStore({host: config.redis.host, port: config.redis.port, pass: config.redis.pass}),
+mysqlConfig:
+  GENERATOR_PLACEHODER_MYSQL_CONFIG_1: |
+    ##
+      mysql: {
+        host: getServiceHost('mysql', 'localhost'),
+        port: 3306,
+        user: process.env.MYSQL_USER || 'full_user',
+        password: process.env.MYSQL_PASSWORD || 'full',
+        db: process.env.MYSQL_DB || 'full_db'
+      },
+  GENERATOR_PLACEHODER_MYSQL_CONFIG_2: |
+    config.mysql.connectionString = () => {
+      const str = `mysql://${config.mysql.user}:${config.mysql.password}@${config.mysql.host}/${config.mysql.db}`;
+      return str;
+    };
+migrateScript:
+  GENERATOR_PLACEHODER_MIGRATE_SCRIPT: |
+    ##
+        , "migrate:create": "sequelize migration:create",
+        "migrate": "node config/generateConfig.js && sequelize db:migrate",
+        "migrate:undo": "node config/generateConfig.js && sequelize db:migrate:undo",
+        "migrate:all": "node ./server/migrations/initAllIfDBEmpty.js && npm run migrate"
+elasticsearchConfig:
+  GENERATOR_PLACEHODER_ELASTICSEARCH_CONFIG: |
+    ##
+      elasticsearch: {
+        host: `http://${getServiceHost('elasticsearch:9200', 'localhost:9200')}`,
+        log: '',
+        maxRetries: 5,
+        requestTimeout: 50000,
+        deadTimeout: 5000,
+        httpAuth: 'full:full'
+      },
+mongodbConfig:
+  GENERATOR_PLACEHODER_MONGODB_CONFIG: |
+    ##
+      mongodb: {
+        connectionString: `mongodb://full:full@${getServiceHost('mongodb', 'localhost')}:27017`;
+      },
+kafkaConfig:
+  GENERATOR_PLACEHODER_ZOOKEEPER_CONFIG: |
+    ##
+      zookeeper: {
+        url: `${getServiceHost('zookeeper', 'localhost'}:2181`
+      },
+  GENERATOR_PLACEHODER_KAFKA_CONFIG: |
+    ##
+      kafka: {
+        topic: 'topicFull',
+        groupId: 'groupFull'
+      },

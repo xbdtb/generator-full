@@ -1,0 +1,14 @@
+node_modules
+dist
+doc
+Jenkinsfile
+k8sAppConfig_generate.yaml
+k8sAppInitJob_generate.yaml
+k8sAppDeploy_generate.yaml
+.dockerignore
+.editorconfig
+.gitignore
+eslintrc.js
+es.prettierrc
+tslint.json
+ts.prettierrc

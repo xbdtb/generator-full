@@ -1,0 +1,49 @@
+{
+  "scripts": {
+    "precommit": "npm run lint",
+    "tsc": "tsc --noUnusedLocals",
+    "lint": "npm i && npm run tslint",
+    "tslint": "npm run tsc --noUnusedLocals && tslint --project -p . 'server/**/*.ts'",
+    "tslint:fix": "npm run tsc --noUnusedLocals && tslint --fix --project -p . 'server/**/*.ts'",
+    "start": "npm run tsc --noUnusedLocals && better-npm-run start:debug",
+    "start:release": "npm run tsc --noUnusedLocals && better-npm-run start:release",
+    "migrateScript": "GENERATOR_PLACEHODER_MIGRATE_SCRIPT"
+  },
+  "betterScripts": {
+    "start:debug": {
+      "command": "nodemon --exec node index.js --watch server -e js",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "start:release": {
+      "command": "node index.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "dependencies": {
+    "@types/node": "8.5.2",
+    "better-npm-run": "^0.1.0",
+    "compression": "^1.7.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "git-revision-webpack-plugin": "^2.5.1",
+    "method-override": "^2.3.10",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
+    "typescript": "^2.6.2"
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "nodemon": "^1.14.3",
+    "prettier": "^1.7.0",
+    "tslint": "^5.7.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "tslint-plugin-blank-line": "^0.0.8",
+    "tslint-plugin-prettier": "^1.2.0"
+  }
+}

@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${SERVICE_NAME}-init-job-${BUILD_NUMBER}
+  labels:
+    app: ${SERVICE_NAME}-init-job-${BUILD_NUMBER}
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE_NAME}-init-job${BUILD_NUMBER}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: ${SERVICE_NAME}-init-job-${BUILD_NUMBER}
+        image: localhost:5000/${SERVICE_NAME}:${BUILD_NUMBER}
+        command: ["npm", "run", "migrate"]
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: ${SERVICE_NAME}
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "50Mi"
+          limits:
+            cpu: "300m"
+            memory: "200Mi"
+      volumes:
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+          type: File
