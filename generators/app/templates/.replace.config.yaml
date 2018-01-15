@@ -64,13 +64,13 @@ mongodbConfig:
   GENERATOR_PLACEHODER_MONGODB_CONFIG: |
     ##
       mongodb: {
-        connectionString: `mongodb://full:full@${getServiceHost('mongodb', 'localhost')}:27017`;
+        connectionString: `mongodb://full:full@${getServiceHost('mongodb', 'localhost')}:27017`
       },
 kafkaConfig:
   GENERATOR_PLACEHODER_ZOOKEEPER_CONFIG: |
     ##
       zookeeper: {
-        url: `${getServiceHost('zookeeper', 'localhost'}:2181`
+        url: `${getServiceHost('zookeeper', 'localhost')}:2181`
       },
   GENERATOR_PLACEHODER_KAFKA_CONFIG: |
     ##

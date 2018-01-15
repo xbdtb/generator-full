@@ -1,6 +1,6 @@
 {
   "name": "generator-full",
-  "version": "0.0.0",
+  "version": "0.0.6",
   "description": "full stack project generator, server with typescript + graphql + webpack hmr + sequelize + miggration + tslint + prettier, and client with react + webpack + apollo client + eslint + prettier",
   "homepage": "",
   "author": {
@@ -40,10 +40,6 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "prepublish": "nsp check",
-    "pretest": "eslint .",
-    "precommit": "lint-staged",
-    "test": "jest",
     "publish_npmjs": "npm set registry=https://registry.npmjs.com && npm publish && npm set registry=https://registry.npm.taobao.org"
   },
   "lint-staged": {

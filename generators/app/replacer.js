@@ -36,7 +36,7 @@ function removePlaceHolders(src, placeHolders) {
   for (let name in placeHolders) {
     src = removePlaceHolder(src, name);
   }
-  console.log(src);
+  // console.log(src);
   return src;
 }
 
@@ -73,7 +73,7 @@ function replacePlaceHolders(src, placeHolders, remove = false) {
       }
       src = replacePlaceHolder(src, name, valueLines.join('\n'));
     }
-    console.log(src);
+    // console.log(src);
     return src;
   }
 }
@@ -93,4 +93,3 @@ module.exports = {
 };
 
 // test();
-

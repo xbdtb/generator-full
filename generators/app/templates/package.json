@@ -11,7 +11,7 @@
   },
   "betterScripts": {
     "start:debug": {
-      "command": "nodemon --exec node index.js --watch server -e js",
+      "command": "nodemon --exec 'node index.js' --watch server -e js",
       "env": {
         "NODE_ENV": "development"
       }

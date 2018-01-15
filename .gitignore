@@ -1,3 +1,4 @@
 node_modules
-coverage
 .idea
+generators/**/*.js
+generators/**/*.js.map

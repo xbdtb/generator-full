@@ -71,7 +71,6 @@ module.exports = class extends Generator {
     return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
       this.props = props;
-      console.log(props);
     });
   }
 
@@ -86,7 +85,7 @@ module.exports = class extends Generator {
       '.babelrc',
       '.dockerignore',
       '.editorconfig',
-      '.gitignore',
+      // '.gitignore',
       '.npmrc',
       // 'Dockerfile',
       // 'index.js',
@@ -97,7 +96,8 @@ module.exports = class extends Generator {
       // 'package.json',
       'ts.prettierrc',
       'tsconfig.json',
-      'tslint.json'
+      'tslint.json',
+      'index.js'
     ];
     if (this.props.enableGraphQLServer) {
       files.push('server/graphql/types/modelTypes.ts');
@@ -129,7 +129,6 @@ module.exports = class extends Generator {
     });
 
     const replaceConfig = replacer.getReplaceConfig(this.templatePath('.replace.config.yaml'));
-    console.log(replaceConfig);
 
     let serverIndex = this.fs.read(this.templatePath('server/index.ts'), {});
     serverIndex = replacer.replacePlaceHolders(serverIndex, replaceConfig.graphqlServerIndex, !this.props.enableGraphQLServer);
@@ -147,6 +146,9 @@ module.exports = class extends Generator {
     let pkg = this.fs.read(this.templatePath('package.json'), {});
     pkg = replacer.replacePlaceHolders(pkg, replaceConfig.migrateScript, !this.props.enableMysql);
     this.fs.write(this.destinationPath('package.json'), pkg);
+
+    let gitIgnore = this.fs.read(this.templatePath('gitignore'), {});
+    this.fs.write(this.destinationPath('.gitignore'), gitIgnore);
   }
 
   install() {
